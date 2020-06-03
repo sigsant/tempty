@@ -1,5 +1,6 @@
 import datetime
 import argparse
+import webbrowser
 
 class Tiempo:
     def __init__(self, horas, minutos):
@@ -40,3 +41,10 @@ def horaProgramada(horas_user, horas_progr, minutos_user, minutos_progr):
 
 
 horaProgramada(tiempoUsuario.horas, tiempoProgramado.horas,tiempoUsuario.minutos,tiempoProgramado.minutos)
+
+def readFile():
+    with open('videos_url.txt') as f:
+        content = f.readline()
+        webbrowser.open_new_tab(content)
+        
+print(readFile())
