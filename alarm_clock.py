@@ -1,23 +1,20 @@
 import datetime
+import time
 import argparse
+import webbrowser
+import sys
 
-class Tiempo:
-    def __init__(self, horas, minutos):
-        self.horas = horas
-        self.minutos = minutos
 
 #Argumentos del programa
 parser = argparse.ArgumentParser(description='Alarma de reloj que abre el navegador a una hora establecida')
-parser.add_argument('time', type=str, help='hora a la que se programa la alarma en formato hh:mm')
+parser.add_argument('horario', type=str, help='Hora programada en formato hh:mm')
+parser.add_argument('fichero', type=str, help='Nombre del fichero que se abre en el navegador')
 args = parser.parse_args()
 
-#1.Obtiene la hora actual
-date_time = datetime.datetime.now()
-current_hours = date_time.hour
-current_minutes = date_time.minute
-
-## Tiempo de usuario local ##
-tiempoUsuario = Tiempo(current_hours, current_minutes)
+def readFile(filename):
+    with open( filename + '.txt') as f:
+        content = f.readline()
+        webbrowser.open_new_tab(content)
 
 #2.Formatea la hora introducida por el usuario
 def formatoHora(user_time):
@@ -27,16 +24,26 @@ def formatoHora(user_time):
     return (hour_num,minute_num)
 
 ## Tiempo programado a partir de la linea de comandos ##
-horas, minutos = formatoHora(args.time)
-tiempoProgramado = Tiempo(horas, minutos)
+horas, minutos = formatoHora(args.horario)
+
 
 #3.Establece la hora programada
-### TODO: Añadir en esta función un loop para que cumpla la condición y lea un fichero externo.
 def horaProgramada(horas_user, horas_progr, minutos_user, minutos_progr):
-    if horas_user == horas_progr and tiempoUsuario.minutos == minutos:
-        print('La hora concuerda')
-    else:
-        print('No concuerda la hora')
+    if (horas_user == horas_progr) and (minutos_user == minutos_progr):
+        print('Correcto')
+        readFile(args.fichero)
+        sys.exit('Ha terminado la ejecución correctamente')
+    else: 
+        print('Error...\n')
+        time.sleep(20)
 
+while True:
+    #Actualiza la hora y minutos local cada 30 segundos
+    date_time = datetime.datetime.now()
+    current_hours = date_time.hour
+    current_minutes = date_time.minute
+    print(f'Hora local: {current_hours}:{current_minutes}')
+    print(f'Hora Programada: {horas}:{minutos}\n')
 
-horaProgramada(tiempoUsuario.horas, tiempoProgramado.horas,tiempoUsuario.minutos,tiempoProgramado.minutos)
+    print('Esperando a la ejecución...')
+    horaProgramada(current_hours, horas, current_minutes, minutos)
