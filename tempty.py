@@ -1,5 +1,6 @@
 import datetime
-import time
+from time import sleep
+import random
 import argparse
 import webbrowser
 import sys
@@ -12,16 +13,32 @@ parser.add_argument('fichero', type=str, help='Nombre del fichero que se abre en
 args = parser.parse_args()
 
 def readFile(filename):
-    with open( filename + '.txt') as f:
-        content = f.readline()
-        webbrowser.open_new_tab(content)
+    '''
+    Lee al azar una linea del fichero y lo abre en una pestaña del navegador
 
-#2.Formatea la hora introducida por el usuario
+    Parametro:
+        filename(str): Nombre del fichero sin extension
+    '''
+    with open(filename + '.txt') as f:
+        content = f.readlines()
+        random_index = random.randint(0,2)
+        webbrowser.open_new_tab(content[random_index])
+
 def formatoHora(user_time):
+    '''
+    Divide el horario introducida por el usuario en fomato hora y minutos.
+
+    Parametros: 
+        user_time(str):  Horario definido por el usuario en el argumento[0]
+
+    Return:
+        horas(int):  hora con rango 0 - 23
+        minutos(int): minutos con rango 0 - 59 
+    '''
     user_time_num = int(user_time.replace(':', ''))
-    hour_num = int(user_time_num / 100)
-    minute_num = user_time_num % 100
-    return (hour_num,minute_num)
+    horas = int(user_time_num / 100)
+    minutos = user_time_num % 100
+    return (horas, minutos)
 
 ## Tiempo programado a partir de la linea de comandos ##
 horas, minutos = formatoHora(args.horario)
@@ -29,21 +46,30 @@ horas, minutos = formatoHora(args.horario)
 
 #3.Establece la hora programada
 def horaProgramada(horas_user, horas_progr, minutos_user, minutos_progr):
+    '''
+    Establece el comportamiento del temporizador.
+
+    Si coincide inicia la función readFile() y sale del programa.
+    Si no coincide, espera a que se ejecute 40 segundos después.
+
+    Parametros:
+        horas_user(int): Hora local del usuario.
+        horas_progr(int): Hora programada por el usuario
+        minutos_user(int): Minuto local del usuario
+        minutos_progr(int): Minuto programado por el usuario.
+    '''
     if (horas_user == horas_progr) and (minutos_user == minutos_progr):
-        print('Correcto')
         readFile(args.fichero)
         sys.exit('Ha terminado la ejecución correctamente')
     else: 
-        print('Error...\n')
-        time.sleep(20)
+        sleep(40)
 
 while True:
-    #Actualiza la hora y minutos local cada 30 segundos
+    '''
+    Actualiza el horario local y lo compara con el programado.
+    '''
     date_time = datetime.datetime.now()
     current_hours = date_time.hour
     current_minutes = date_time.minute
-    print(f'Hora local: {current_hours}:{current_minutes}')
-    print(f'Hora Programada: {horas}:{minutos}\n')
-
-    print('Esperando a la ejecución...')
+    print('Esperando a la ejecución...\n')
     horaProgramada(current_hours, horas, current_minutes, minutos)
