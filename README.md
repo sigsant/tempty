@@ -1,4 +1,4 @@
-# Tempy
+# Tempty
 
 Tempy es un temporizador básico que se ejecuta por línea de comandos que abre una ventana de tu navegador con el enlace contenido en un archivo de texto ubicado en el mismo directorio en el que se encuentra el programa. No depende de ninguna librería externa.
 
