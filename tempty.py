@@ -12,6 +12,12 @@ parser.add_argument('horario', type=str, help='Hora programada en formato hh:mm'
 parser.add_argument('fichero', type=str, help='Nombre del fichero que se abre en el navegador')
 args = parser.parse_args()
 
+def loading():
+    print('\nEsperando a la ejecución', end='')
+    for x in range(0,10):
+        print('.',end='', flush=True)
+        sleep(1)
+
 def readFile(filename):
     '''
     Lee al azar una linea del fichero y lo abre en una pestaña del navegador
@@ -40,11 +46,6 @@ def formatoHora(user_time):
     minutos = user_time_num % 100
     return (horas, minutos)
 
-## Tiempo programado a partir de la linea de comandos ##
-horas, minutos = formatoHora(args.horario)
-
-
-#3.Establece la hora programada
 def horaProgramada(horas_user, horas_progr, minutos_user, minutos_progr):
     '''
     Establece el comportamiento del temporizador.
@@ -60,16 +61,23 @@ def horaProgramada(horas_user, horas_progr, minutos_user, minutos_progr):
     '''
     if (horas_user == horas_progr) and (minutos_user == minutos_progr):
         readFile(args.fichero)
-        sys.exit('Ha terminado la ejecución correctamente')
-    else: 
-        sleep(40)
+        sys.exit('\n\nHa terminado la ejecución correctamente')
+    else:
+        sleep(30)
 
-while True:
-    '''
-    Actualiza el horario local y lo compara con el programado.
-    '''
-    date_time = datetime.datetime.now()
-    current_hours = date_time.hour
-    current_minutes = date_time.minute
-    print('Esperando a la ejecución...\n')
-    horaProgramada(current_hours, horas, current_minutes, minutos)
+def main():
+
+    ## Tiempo programado a partir de la linea de comandos ##
+    horas, minutos = formatoHora(args.horario)
+
+    while True:
+        '''
+        Actualiza el horario local y lo compara con el programado.
+        '''
+        date_time = datetime.datetime.now()
+        current_hours = date_time.hour
+        current_minutes = date_time.minute
+        loading()
+        horaProgramada(current_hours, horas, current_minutes, minutos)
+
+main()
